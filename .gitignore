@@ -1,0 +1,26 @@
+# Segredos e configurações locais (nunca enviar ao repositório)
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Django
+staticfiles/
+*.log
+db.sqlite3
+
+# Testes e cobertura
+.coverage
+htmlcov/
+
+# Sistemas operacionais e editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

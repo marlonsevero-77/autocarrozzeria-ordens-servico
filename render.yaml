@@ -1,0 +1,22 @@
+# Configuração de implantação no Render (plano gratuito).
+# As variáveis SECRET_KEY e DATABASE_URL são definidas no painel do Render,
+# nunca neste arquivo.
+services:
+  - type: web
+    name: autocarrozzeria-ordens-servico
+    runtime: python
+    plan: free
+    buildCommand: >-
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --no-input &&
+      python manage.py migrate --no-input
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.1"
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
