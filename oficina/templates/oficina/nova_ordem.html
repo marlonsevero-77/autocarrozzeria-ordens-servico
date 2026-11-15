@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block titulo %}Nova ordem de serviço{% endblock %}
+{% block classe_main %}container py-4 largura-formulario{% endblock %}
+
+{% block conteudo %}
+<a href="{% url 'oficina:painel' %}" class="d-inline-flex align-items-center gap-1 mb-3 fw-semibold">
+  <i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar ao painel
+</a>
+<h1 class="h3 mb-1">Nova ordem de serviço</h1>
+<p class="text-body-secondary">Preencha os dados do carro que chegou. <span class="obrigatorio">*</span> campo obrigatório.</p>
+
+{% if form.non_field_errors %}
+  <div class="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+    <i class="bi bi-exclamation-octagon-fill fs-5" aria-hidden="true"></i>
+    <div>{% for erro in form.non_field_errors %}{{ erro }}{% endfor %}</div>
+  </div>
+{% elif form.errors %}
+  <div class="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+    <i class="bi bi-exclamation-octagon-fill fs-5" aria-hidden="true"></i>
+    <div><strong>A ordem não foi salva.</strong> Corrija os campos indicados abaixo.</div>
+  </div>
+{% endif %}
+
+<form method="post" class="card shadow-sm">
+  {% csrf_token %}
+  <div class="card-body p-4">
+    <fieldset class="mb-4">
+      <legend class="h5">Veículo</legend>
+      <div class="row g-3">
+        <div class="col-12 col-md-4">
+          {% include "oficina/_campo.html" with campo=form.placa %}
+          <button type="submit" name="acao" value="buscar" class="btn btn-outline-secondary mt-2" formnovalidate>
+            <i class="bi bi-search me-1" aria-hidden="true"></i>Buscar placa
+          </button>
+        </div>
+        <div class="col-12 col-md-3">{% include "oficina/_campo.html" with campo=form.marca %}</div>
+        <div class="col-12 col-md-3">{% include "oficina/_campo.html" with campo=form.modelo %}</div>
+        <div class="col-12 col-md-2">{% include "oficina/_campo.html" with campo=form.cor %}</div>
+      </div>
+    </fieldset>
+
+    <fieldset class="mb-4">
+      <legend class="h5">Cliente</legend>
+      <div class="row g-3">
+        <div class="col-12 col-md-7">{% include "oficina/_campo.html" with campo=form.cliente_nome %}</div>
+        <div class="col-12 col-md-5">{% include "oficina/_campo.html" with campo=form.telefone %}</div>
+      </div>
+    </fieldset>
+
+    <fieldset class="mb-4">
+      <legend class="h5">Serviço combinado</legend>
+      <fieldset class="mb-3" {% if form.tipo_atendimento.errors %}aria-describedby="erro-tipo_atendimento"{% endif %}>
+        <legend class="form-label fs-6">Tipo de atendimento <span class="obrigatorio" aria-hidden="true">*</span><span class="visually-hidden">(obrigatório)</span></legend>
+        <div class="d-flex flex-wrap gap-2">
+          {% for opcao in form.tipo_atendimento %}
+            <input type="radio" class="btn-check" name="{{ opcao.data.name }}" id="{{ opcao.id_for_label }}"
+                   value="{{ opcao.data.value }}" {% if opcao.data.selected %}checked{% endif %}>
+            <label class="btn btn-outline-secondary" for="{{ opcao.id_for_label }}">{{ opcao.choice_label }}</label>
+          {% endfor %}
+        </div>
+        {% for erro in form.tipo_atendimento.errors %}
+          <div id="erro-tipo_atendimento" class="erro-campo d-flex gap-1 align-items-start">
+            <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i><span>{{ erro }}</span>
+          </div>
+        {% endfor %}
+      </fieldset>
+
+      <div class="mb-3">{% include "oficina/_campo.html" with campo=form.descricao_servico %}</div>
+
+      <div class="row g-3">
+        <div class="col-12 col-md-4">{% include "oficina/_campo.html" with campo=form.prazo_estimado %}</div>
+        <div class="col-12 col-md-5">
+          <span class="form-label d-block">Etapa inicial</span>
+          <div class="form-control-plaintext">
+            {% if etapa_inicial %}<i class="bi bi-1-circle me-1" aria-hidden="true"></i>{{ etapa_inicial.nome }} · {{ etapa_inicial.responsavel }}{% else %}Nenhuma etapa ativa{% endif %}
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="d-flex flex-wrap gap-2 justify-content-end border-top pt-3">
+      <a href="{% url 'oficina:painel' %}" class="btn btn-outline-secondary btn-lg">Cancelar</a>
+      <button type="submit" name="acao" value="salvar" class="btn btn-marca btn-lg">
+        <i class="bi bi-check2-circle me-1" aria-hidden="true"></i>Salvar ordem
+      </button>
+    </div>
+  </div>
+</form>
+{% endblock %}
