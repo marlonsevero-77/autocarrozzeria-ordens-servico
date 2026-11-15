@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block titulo %}Painel de serviços{% endblock %}
+
+{% block conteudo %}
+<div class="d-flex flex-wrap align-items-end gap-3 mb-3">
+  <div class="me-auto">
+    <h1 class="h3 mb-0">Painel de serviços</h1>
+    <p class="text-body-secondary mb-0">{{ total }} carro{{ total|pluralize }} em andamento</p>
+  </div>
+</div>
+
+<div class="row g-3 row-cols-1 row-cols-md-3 row-cols-xl-5">
+  {% for coluna in colunas %}
+    <section class="col" aria-labelledby="etapa-{{ coluna.etapa.pk }}">
+      <div class="coluna-etapa p-3">
+        <div class="d-flex justify-content-between align-items-center mb-1 gap-2">
+          <h2 id="etapa-{{ coluna.etapa.pk }}">{{ coluna.etapa.sequencia }}. {{ coluna.etapa.nome }}</h2>
+          <span class="contador" aria-label="{{ coluna.ordens|length }} carro{{ coluna.ordens|length|pluralize }}">{{ coluna.ordens|length }}</span>
+        </div>
+        <div class="responsavel mb-3"><i class="bi bi-person-fill me-1" aria-hidden="true"></i>{{ coluna.etapa.responsavel }}</div>
+
+        {% for ordem in coluna.ordens %}
+          <article class="cartao-carro p-3 mb-3" aria-label="{{ ordem.veiculo.marca }} {{ ordem.veiculo.modelo }}, placa {{ ordem.veiculo.placa }}">
+            <span class="placa">{{ ordem.veiculo.placa }}</span>
+            <div class="fw-semibold mt-2">{{ ordem.veiculo.marca }} {{ ordem.veiculo.modelo }}</div>
+            <div class="small">Cliente: {{ ordem.veiculo.cliente.nome }}</div>
+            <div class="small"><i class="bi bi-calendar-event me-1" aria-hidden="true"></i>Prazo: {{ ordem.prazo_estimado|date:"d/m/Y" }}</div>
+          </article>
+        {% empty %}
+          <div class="text-body-secondary small p-3 border rounded bg-white">
+            <i class="bi bi-inbox me-1" aria-hidden="true"></i>Nenhum carro nesta etapa.
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+</div>
+{% endblock %}

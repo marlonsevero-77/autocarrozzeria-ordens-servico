@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acesso bloqueado{% endblock %}
+{% block classe_main %}container py-5{% endblock %}
+
+{% block conteudo %}
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-6">
+    <div class="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+      <i class="bi bi-lock-fill fs-4" aria-hidden="true"></i>
+      <div>
+        <h1 class="h5 mb-1">Acesso bloqueado por 15 minutos</h1>
+        <p class="mb-0">Houve várias tentativas incorretas de entrar com este usuário. Aguarde 15 minutos e tente novamente, ou fale com os donos da oficina.</p>
+      </div>
+    </div>
+    <a href="{% url 'login' %}" class="btn btn-marca btn-lg">Voltar para a tela de entrada</a>
+  </div>
+</div>
+{% endblock %}

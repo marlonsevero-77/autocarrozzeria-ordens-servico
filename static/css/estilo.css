@@ -1,0 +1,154 @@
+:root {
+  --cor-marca: #1f3a5f;
+  --cor-marca-escura: #152a45;
+  --cor-fundo: #f4f6f9;
+}
+
+body {
+  background: var(--cor-fundo);
+  color: #1d2329;
+  font-size: 1rem;
+}
+
+/* Cabeçalho */
+.barra-topo {
+  background: var(--cor-marca);
+  color: #fff;
+}
+.barra-topo .marca {
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+.barra-topo .marca small {
+  font-weight: 400;
+  opacity: .9;
+}
+
+/* Área de toque mínima de 44 x 44 px (RNF04) */
+.btn,
+.form-control,
+.form-select {
+  min-height: 44px;
+}
+.btn {
+  min-width: 44px;
+  font-weight: 600;
+}
+
+.btn-marca {
+  background: var(--cor-marca);
+  border-color: var(--cor-marca);
+  color: #fff;
+}
+.btn-marca:hover,
+.btn-marca:focus {
+  background: var(--cor-marca-escura);
+  border-color: var(--cor-marca-escura);
+  color: #fff;
+}
+
+/* Foco visível reforçado (RNF04) */
+.btn:focus-visible,
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus,
+a:focus-visible {
+  outline: 3px solid #f5b400;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Rótulos persistentes */
+.form-label {
+  font-weight: 600;
+  margin-bottom: .35rem;
+}
+.obrigatorio {
+  color: #b02a37;
+  font-weight: 700;
+}
+
+/* Mensagens de erro com ícone e texto */
+.erro-campo {
+  color: #8a1c27;
+  font-weight: 600;
+  font-size: .95rem;
+  margin-top: .35rem;
+}
+
+/* Painel */
+.coluna-etapa {
+  background: #e9edf2;
+  border-radius: .6rem;
+  min-height: 100%;
+}
+.coluna-etapa h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+}
+.coluna-etapa .responsavel {
+  font-size: .9rem;
+  color: #3d4650;
+}
+.contador {
+  background: var(--cor-marca);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: .1rem .6rem;
+  font-size: .85rem;
+}
+.cartao-carro {
+  background: #fff;
+  border: 1px solid #cfd6de;
+  border-radius: .55rem;
+}
+.cartao-carro.perto {
+  border-left: 6px solid #c76a00;
+}
+.cartao-carro.atrasado {
+  border-left: 6px solid #b02a37;
+}
+.placa {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: #eef1f5;
+  border: 1px solid #9aa5b1;
+  border-radius: .3rem;
+  padding: 0 .4rem;
+}
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  font-weight: 700;
+  font-size: .85rem;
+  border-radius: .35rem;
+  padding: .2rem .5rem;
+}
+.selo-perto {
+  background: #fff1dc;
+  color: #7a3e00;
+  border: 1px solid #c76a00;
+}
+.selo-atrasado {
+  background: #fbe3e5;
+  color: #7c1420;
+  border: 1px solid #b02a37;
+}
+.btn-avancar {
+  font-size: .9rem;
+  text-align: left;
+}
+.legenda-alertas {
+  font-size: .9rem;
+}
+
+/* Utilitários usados no lugar de estilos embutidos (exigência da CSP) */
+.cor-marca { color: var(--cor-marca); }
+.fundo-suave { background: #e9edf2; }
+.largura-formulario { max-width: 980px; }
+.cartao-carro.atualizado { outline: 3px solid #198754; outline-offset: -1px; }
+.btn-link-sair { color: #fff; }
