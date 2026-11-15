@@ -61,7 +61,7 @@ static/              CSS do projeto, Bootstrap e Bootstrap Icons
 | Python | 3.13 | Linguagem |
 | Django | 5.2 LTS | Framework web (MVT, ORM, autenticação, Admin, testes) |
 | PostgreSQL | 16 | Banco de dados (local e Neon) |
-| psycopg | 3.2 | Driver do PostgreSQL |
+| psycopg | 3.3 | Driver do PostgreSQL |
 | django-axes | 8.3 | Bloqueio por 15 min após 5 falhas de login |
 | Gunicorn | 23 | Servidor de aplicação (Render) |
 | WhiteNoise | 6.12 | Arquivos estáticos compactados |
