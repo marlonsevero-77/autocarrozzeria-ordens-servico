@@ -1,0 +1,8 @@
+<label for="{{ campo.id_for_label }}" class="form-label">{{ campo.label }} <span class="obrigatorio" aria-hidden="true">*</span><span class="visually-hidden">(obrigatório)</span></label>
+{{ campo }}
+{% if campo.help_text %}<div id="ajuda-{{ campo.name }}" class="form-text">{{ campo.help_text }}</div>{% endif %}
+{% for erro in campo.errors %}
+  <div id="erro-{{ campo.name }}" class="erro-campo d-flex gap-1 align-items-start">
+    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i><span>{{ erro }}</span>
+  </div>
+{% endfor %}
