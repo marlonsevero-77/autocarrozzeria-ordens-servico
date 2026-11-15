@@ -14,6 +14,11 @@
     <h1 class="h3 mb-0">Painel de serviços</h1>
     <p class="text-body-secondary mb-0">{{ total }} carro{{ total|pluralize }} em andamento</p>
   </div>
+  <div class="legenda-alertas d-flex flex-wrap gap-2 align-items-center">
+    <span class="fw-semibold">Legenda:</span>
+    <span class="selo selo-perto"><i class="bi bi-clock-fill" aria-hidden="true"></i>Perto do prazo</span>
+    <span class="selo selo-atrasado"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>Atrasado</span>
+  </div>
 </div>
 
 <div class="row g-3 row-cols-1 row-cols-md-3 row-cols-xl-5">
@@ -27,11 +32,36 @@
         <div class="responsavel mb-3"><i class="bi bi-person-fill me-1" aria-hidden="true"></i>{{ coluna.etapa.responsavel }}</div>
 
         {% for ordem in coluna.ordens %}
-          <article class="cartao-carro p-3 mb-3" aria-label="{{ ordem.veiculo.marca }} {{ ordem.veiculo.modelo }}, placa {{ ordem.veiculo.placa }}">
-            <span class="placa">{{ ordem.veiculo.placa }}</span>
+          <article class="cartao-carro p-3 mb-3{% if ordem.alerta == 'perto' %} perto{% elif ordem.alerta == 'atrasado' %} atrasado{% endif %}{% if ordem.pk == ultima_atualizada %} atualizado{% endif %}"
+                   aria-label="{{ ordem.veiculo.marca }} {{ ordem.veiculo.modelo }}, placa {{ ordem.veiculo.placa }}">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
+              <span class="placa">{{ ordem.veiculo.placa }}</span>
+              {% if ordem.pk == ultima_atualizada %}
+                <span class="badge text-bg-success"><i class="bi bi-check-lg" aria-hidden="true"></i> Atualizado agora</span>
+              {% endif %}
+              {% if ordem.alerta == "perto" %}
+                <span class="selo selo-perto"><i class="bi bi-clock-fill" aria-hidden="true"></i>Perto do prazo</span>
+              {% elif ordem.alerta == "atrasado" %}
+                <span class="selo selo-atrasado"><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>Atrasado</span>
+              {% endif %}
+            </div>
             <div class="fw-semibold mt-2">{{ ordem.veiculo.marca }} {{ ordem.veiculo.modelo }}</div>
             <div class="small">Cliente: {{ ordem.veiculo.cliente.nome }}</div>
-            <div class="small"><i class="bi bi-calendar-event me-1" aria-hidden="true"></i>Prazo: {{ ordem.prazo_estimado|date:"d/m/Y" }}</div>
+            <div class="small">{{ ordem.get_tipo_atendimento_display }} · {{ ordem.descricao_servico|truncatechars:60 }}</div>
+            <div class="small mb-3">
+              <i class="bi bi-calendar-event me-1" aria-hidden="true"></i>Prazo: {{ ordem.prazo_estimado|date:"d/m/Y" }}
+              {% if ordem.alerta == "atrasado" %} · {{ ordem.atraso }} dia{{ ordem.atraso|pluralize }} de atraso{% endif %}
+            </div>
+            <form method="post" action="{% url 'oficina:avancar_etapa' ordem.pk %}" class="m-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-marca btn-avancar w-100">
+                {% if ordem.proxima %}
+                  <i class="bi bi-arrow-right-circle me-1" aria-hidden="true"></i>Avançar para {{ ordem.proxima.nome }}
+                {% else %}
+                  <i class="bi bi-check2-all me-1" aria-hidden="true"></i>Marcar como entregue
+                {% endif %}
+              </button>
+            </form>
           </article>
         {% empty %}
           <div class="text-body-secondary small p-3 border rounded bg-white">
