@@ -1,0 +1,45 @@
+{% load static %}<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Ordens de Serviço{% endblock %} | AutoCarrozzeria Di Girolamo</title>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+</head>
+<body>
+  <header class="barra-topo py-2">
+    <div class="container-fluid px-4 d-flex align-items-center gap-3 flex-wrap">
+      <a href="{% if user.is_authenticated %}{% url 'oficina:painel' %}{% else %}{% url 'login' %}{% endif %}"
+         class="d-flex align-items-center gap-2 me-auto text-white text-decoration-none">
+        <i class="bi bi-car-front-fill fs-4" aria-hidden="true"></i>
+        <span class="marca">AutoCarrozzeria Di Girolamo <small>· Ordens de Serviço</small></span>
+      </a>
+      {% if user.is_authenticated %}
+        <span class="small"><i class="bi bi-person-circle me-1" aria-hidden="true"></i>{{ user.get_username }}</span>
+        {% block acoes_cabecalho %}{% endblock %}
+        <form method="post" action="{% url 'logout' %}" class="m-0">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-light">
+            <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>Sair
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="{% block classe_main %}container-fluid px-4 py-3{% endblock %}">
+    {% if messages %}
+      {% for mensagem in messages %}
+        <div class="alert {% if mensagem.tags == 'error' %}alert-danger{% elif mensagem.tags == 'success' %}alert-success{% else %}alert-info{% endif %} d-flex gap-2 align-items-center"
+             role="{% if mensagem.tags == 'error' %}alert{% else %}status{% endif %}">
+          <i class="bi {% if mensagem.tags == 'error' %}bi-exclamation-octagon-fill{% elif mensagem.tags == 'success' %}bi-check-circle-fill{% else %}bi-info-circle-fill{% endif %} fs-5" aria-hidden="true"></i>
+          <div>{{ mensagem }}</div>
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% block conteudo %}{% endblock %}
+  </main>
+</body>
+</html>
