@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import NovaOrdemForm
-from .models import Etapa, OrdemServico
+from .models import Etapa, OrdemServico, normalizar_placa
 
 
 @login_required
@@ -53,7 +53,7 @@ def nova_ordem(request):
             form = NovaOrdemForm(initial=iniciais)
         else:
             messages.info(request, "Placa ainda não cadastrada: preencha os dados do veículo e do cliente.")
-            form = NovaOrdemForm(initial={"placa": placa.upper().strip()})
+            form = NovaOrdemForm(initial={"placa": normalizar_placa(placa)})
         return render(request, "oficina/nova_ordem.html", {"form": form, "etapa_inicial": etapa_inicial})
 
     if request.method == "POST":
