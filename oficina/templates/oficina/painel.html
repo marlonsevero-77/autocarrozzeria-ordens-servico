@@ -62,6 +62,14 @@
                 {% endif %}
               </button>
             </form>
+            {% if ordem.pode_desfazer %}
+              <form method="post" action="{% url 'oficina:desfazer_avanco' ordem.pk %}" class="m-0 mt-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-secondary w-100">
+                  <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Desfazer avanço (clique por engano)
+                </button>
+              </form>
+            {% endif %}
           </article>
         {% empty %}
           <div class="text-body-secondary small p-3 border rounded bg-white">

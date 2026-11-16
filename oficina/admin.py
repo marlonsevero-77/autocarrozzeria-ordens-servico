@@ -32,7 +32,7 @@ class HistoricoInline(admin.TabularInline):
     model = HistoricoEtapa
     extra = 0
     can_delete = False
-    readonly_fields = ["etapa_anterior", "etapa_nova", "usuario", "data_hora"]
+    readonly_fields = ["etapa_anterior", "etapa_nova", "usuario", "data_hora", "correcao"]
 
     def has_add_permission(self, request, obj=None):
         return False
@@ -49,8 +49,9 @@ class OrdemServicoAdmin(admin.ModelAdmin):
 
 @admin.register(HistoricoEtapa)
 class HistoricoEtapaAdmin(admin.ModelAdmin):
-    list_display = ["ordem", "etapa_anterior", "etapa_nova", "usuario", "data_hora"]
-    readonly_fields = ["ordem", "etapa_anterior", "etapa_nova", "usuario", "data_hora"]
+    list_display = ["ordem", "etapa_anterior", "etapa_nova", "usuario", "data_hora", "correcao"]
+    list_filter = ["correcao"]
+    readonly_fields = ["ordem", "etapa_anterior", "etapa_nova", "usuario", "data_hora", "correcao"]
 
     def has_add_permission(self, request):
         return False
