@@ -105,14 +105,23 @@ Cria cinco ordens fictícias (sem dados reais de clientes), incluindo um carro p
 python manage.py test
 ```
 
-São 41 testes unitários e de integração, cobrindo:
+Para medir a cobertura de testes:
+
+```bash
+pip install -r requirements-dev.txt
+coverage run manage.py test
+coverage report
+```
+
+São 49 testes unitários e de integração, com **93% de cobertura** do código da aplicação (o CI exige no mínimo 85%), cobrindo:
 
 - modelo de dados (placa única e normalizada, uma ordem em andamento por carro, prazos e alertas);
 - login, mensagem genérica de erro, bloqueio após 5 tentativas, hash PBKDF2 e acesso ao Admin;
 - cadastro (validações, reaproveitamento por placa, CSRF, injeção de SQL e XSS);
-- avanço de etapa (histórico, entrega, POST obrigatório, CSRF, 404) e painel (alertas e número fixo de consultas).
+- avanço de etapa (histórico, entrega, POST obrigatório, CSRF, 404) e painel (alertas e número fixo de consultas);
+- comando de dados de demonstração e regras do Django Admin (etapas em uso não são excluídas, histórico somente leitura).
 
-A cada push e Pull Request, o **GitHub Actions** executa: `check`, verificação de migrações pendentes, todos os testes com PostgreSQL 16, `check --deploy` com configuração de produção e auditoria de dependências com `pip-audit`.
+A cada push e Pull Request, o **GitHub Actions** executa: `check`, verificação de migrações pendentes, todos os testes com PostgreSQL 16 e medição de cobertura (falha abaixo de 85%), `check --deploy` com configuração de produção e auditoria de dependências com `pip-audit`.
 
 ## Segurança
 
