@@ -6,6 +6,8 @@ services:
     name: autocarrozzeria-ordens-servico
     runtime: python
     plan: free
+    # Mesma região do banco no Neon (Europa), para reduzir a latência (RNF03).
+    region: frankfurt
     buildCommand: >-
       pip install -r requirements.txt &&
       python manage.py collectstatic --no-input &&
