@@ -188,6 +188,43 @@ class OrdemServico(models.Model):
         self.refresh_from_db()
         return registro
 
+    def ultimo_avanco_desfazivel(self):
+        """Retorna o último registro do histórico se ele for um avanço que pode ser desfeito.
+
+        Só pode ser desfeito um avanço entre etapas (não a abertura, não a entrega)
+        que seja o registro mais recente da ordem e que ainda não tenha sido corrigido.
+        """
+        if self.entregue:
+            return None
+        ultimo = self.historico.order_by("-data_hora", "-id").first()
+        if (
+            ultimo is None
+            or ultimo.correcao
+            or ultimo.etapa_anterior_id is None
+            or ultimo.etapa_nova_id != self.etapa_atual_id
+        ):
+            return None
+        return ultimo
+
+    @transaction.atomic
+    def desfazer_ultimo_avanco(self, usuario) -> "HistoricoEtapa":
+        """Volta a ordem para a etapa anterior ao último avanço (ajuste da validação).
+
+        A correção não apaga o histórico: gera um novo registro marcado como correção.
+        """
+        ordem = OrdemServico.objects.select_for_update().get(pk=self.pk)
+        ultimo = ordem.ultimo_avanco_desfazivel()
+        if ultimo is None:
+            raise ValidationError("Não há avanço recente para desfazer nesta ordem.")
+        atual = ordem.etapa_atual
+        ordem.etapa_atual = ultimo.etapa_anterior
+        ordem.save()
+        registro = HistoricoEtapa.objects.create(
+            ordem=ordem, etapa_anterior=atual, etapa_nova=ultimo.etapa_anterior, usuario=usuario, correcao=True
+        )
+        self.refresh_from_db()
+        return registro
+
 
 class HistoricoEtapa(models.Model):
     """Registro imutável de cada mudança de etapa.
@@ -202,6 +239,9 @@ class HistoricoEtapa(models.Model):
     etapa_nova = models.ForeignKey(Etapa, on_delete=models.PROTECT, null=True, blank=True, related_name="+")
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+")
     data_hora = models.DateTimeField(auto_now_add=True)
+    correcao = models.BooleanField(
+        "correção", default=False, help_text="Indica que o registro desfez um avanço feito por engano."
+    )
 
     class Meta:
         ordering = ["data_hora", "id"]
@@ -221,4 +261,5 @@ class HistoricoEtapa(models.Model):
     def __str__(self) -> str:
         de = self.etapa_anterior.nome if self.etapa_anterior else "Abertura"
         para = self.etapa_nova.nome if self.etapa_nova else "Entregue"
-        return f"{self.ordem_id}: {de} → {para}"
+        sufixo = " (correção)" if self.correcao else ""
+        return f"{self.ordem_id}: {de} → {para}{sufixo}"

@@ -23,6 +23,7 @@ def painel(request):
     por_etapa = {etapa.pk: [] for etapa in etapas}
     for ordem in ordens:
         por_etapa.setdefault(ordem.etapa_atual_id, []).append(ordem)
+    ultima_atualizada = request.session.pop("ultima_ordem_atualizada", None)
     # Próxima etapa calculada uma vez por etapa (evita consultas repetidas ao banco).
     proxima = {atual.pk: seguinte for atual, seguinte in zip(etapas, etapas[1:] + [None])}
     hoje = timezone.localdate()
@@ -30,11 +31,12 @@ def painel(request):
         ordem.alerta = ordem.situacao_prazo(hoje)
         ordem.atraso = ordem.dias_atraso(hoje)
         ordem.proxima = proxima.get(ordem.etapa_atual_id)
+        ordem.pode_desfazer = ordem.pk == ultima_atualizada
     colunas = [{"etapa": etapa, "ordens": por_etapa.get(etapa.pk, [])} for etapa in etapas]
     contexto = {
         "colunas": colunas,
         "total": sum(len(c["ordens"]) for c in colunas),
-        "ultima_atualizada": request.session.pop("ultima_ordem_atualizada", None),
+        "ultima_atualizada": ultima_atualizada,
     }
     return render(request, "oficina/painel.html", contexto)
 
@@ -96,4 +98,22 @@ def avancar_etapa(request, pk):
             f"{carro} avançou para {registro.etapa_nova.nome} – responsável: {registro.etapa_nova.responsavel}.",
         )
     request.session["ultima_ordem_atualizada"] = ordem.pk
+    return redirect("oficina:painel")
+
+
+@login_required
+@require_POST
+def desfazer_avanco(request, pk):
+    """Ajuste da validação: desfaz o último avanço feito por engano."""
+    ordem = get_object_or_404(OrdemServico.objects.select_related("veiculo"), pk=pk)
+    try:
+        registro = ordem.desfazer_ultimo_avanco(request.user)
+    except ValidationError:
+        messages.error(request, "Não há avanço recente para desfazer nesta ordem.")
+        return redirect("oficina:painel")
+    messages.success(
+        request,
+        f"Avanço desfeito: {ordem.veiculo.marca} {ordem.veiculo.modelo} {ordem.veiculo.placa} "
+        f"voltou para {registro.etapa_nova.nome}. A correção foi registrada no histórico.",
+    )
     return redirect("oficina:painel")
