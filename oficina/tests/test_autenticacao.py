@@ -59,3 +59,13 @@ class PainelTests(TestCase):
         resposta = self.client.get(reverse("oficina:painel"))
         for texto in ["Desmontagem", "Fundo e massa", "Filippo e Riccardo", "Revisão e montagem"]:
             self.assertContains(resposta, texto)
+
+
+class MostrarSenhaTests(TestCase):
+    def test_tela_de_login_tem_botao_acessivel_para_mostrar_a_senha(self):
+        resposta = self.client.get(reverse("login"))
+        self.assertContains(resposta, 'aria-label="Mostrar senha"')
+        self.assertContains(resposta, 'aria-controls="id_password"')
+        self.assertContains(resposta, "js/senha.js")
+        # O campo continua começando oculto.
+        self.assertContains(resposta, 'type="password" name="password"')

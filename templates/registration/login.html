@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block titulo %}Entrar{% endblock %}
 {% block classe_main %}container py-5{% endblock %}
+
+{% block scripts %}<script src="{% static 'js/senha.js' %}" defer></script>{% endblock %}
 
 {% block conteudo %}
 <div class="row justify-content-center g-4 align-items-stretch">
@@ -28,8 +31,15 @@
           </div>
           <div class="mb-4">
             <label for="id_password" class="form-label">Senha</label>
-            <input type="password" name="password" id="id_password" class="form-control form-control-lg"
-                   autocomplete="current-password" required>
+            <div class="input-group">
+              <input type="password" name="password" id="id_password" class="form-control form-control-lg"
+                     autocomplete="current-password" required>
+              <button type="button" class="btn btn-outline-secondary btn-mostrar-senha"
+                      data-alvo="id_password" aria-controls="id_password" aria-pressed="false"
+                      aria-label="Mostrar senha" title="Mostrar senha">
+                <i class="bi bi-eye" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
           <button type="submit" class="btn btn-marca btn-lg w-100">
             <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i> Entrar

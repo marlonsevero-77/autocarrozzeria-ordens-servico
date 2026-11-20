@@ -152,3 +152,6 @@ a:focus-visible {
 .largura-formulario { max-width: 980px; }
 .cartao-carro.atualizado { outline: 3px solid #198754; outline-offset: -1px; }
 .btn-link-sair { color: #fff; }
+
+/* Botão de mostrar senha com a mesma altura do campo (área de toque mínima de 44 px) */
+.btn-mostrar-senha { min-width: 52px; }
